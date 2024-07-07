@@ -1,0 +1,202 @@
+{
+  "name": "dotenvx-decrypt-vscode",
+  "displayName": "Dotenvx Unofficial",
+  "description": "Conveniently decrypt files managed by dotenvx when permissable",
+  "author": "vinnymac",
+  "publisher": "vinnymac",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vinnymac/dotenvx-decrypt-vscode"
+  },
+  "version": "0.0.1",
+  "type": "module",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "galleryBanner": {
+    "color": "#f7df1e",
+    "theme": "dark"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.cjs",
+  "contributes": {
+    "menus": {
+      "editor/title": [
+        {
+          "command": "dotenvx.hideSecrets",
+          "group": "navigation",
+          "when": "resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton && config.dotenvx.enableAutoReveal"
+        },
+        {
+          "command": "dotenvx.showSecrets",
+          "group": "navigation",
+          "when": "resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton && !config.dotenvx.enableAutoReveal"
+        }
+      ],
+      "touchBar": [
+        {
+          "command": "dotenvx.toggleSecretVisibilityTouchbar",
+          "group": "navigation",
+          "when": "resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Dotenvx Decrypt",
+      "properties": {
+        "dotenvx.enableAutoReveal": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable quick reveal of secrets in your .env files"
+        },
+        "dotenvx.displayAutoRevealCodeLens": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the code lens for auto reveal"
+        },
+        "dotenvx.displayAutoRevealNavigationButton": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the navigation button for auto reveal"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "dotenvx.showDecryptedDotenv",
+        "category": "Dotenvx",
+        "title": "Decrypt Dotenv in New Tab"
+      },
+      {
+        "command": "dotenvx.checkVersion",
+        "category": "Dotenvx",
+        "title": "Check Version"
+      },
+      {
+        "command": "dotenvx.toggleSecretVisibility",
+        "category": "Dotenvx",
+        "title": "Toggle Secret Visibility",
+        "shortTitle": "Toggle Secret"
+      },
+      {
+        "command": "dotenvx.hideSecrets",
+        "category": "Dotenvx",
+        "title": "Hide Secrets",
+        "shortTitle": "Hide",
+        "icon": {
+          "light": "./images/lock-open-outline.svg",
+          "dark": "./images/lock-open-outline-white.svg"
+        }
+      },
+      {
+        "command": "dotenvx.showSecrets",
+        "category": "Dotenvx",
+        "title": "Show Secrets",
+        "shortTitle": "Show",
+        "icon": {
+          "light": "./images/lock-closed-outline.svg",
+          "dark": "./images/lock-closed-outline-white.svg"
+        }
+      },
+      {
+        "command": "dotenvx.toggleSecretVisibilityTouchbar",
+        "category": "Dotenvx",
+        "title": "Toggle Secret Visibility",
+        "shortTitle": "Toggle Secret",
+        "icon": {
+          "light": "./images/icon.png",
+          "dark": "./images/icon.png"
+        }
+      },
+      {
+        "command": "dotenvx.convertDotenv",
+        "category": "Dotenvx",
+        "title": "Convert active file"
+      }
+    ],
+    "resourceLabelFormatters": [
+      {
+        "scheme": "dotenvx",
+        "authority": "*",
+        "formatting": {
+          "label": "${path} (decrypted)",
+          "separator": "/",
+          "workspaceSuffix": "Dotenvx"
+        }
+      }
+    ],
+    "languages": [
+      {
+        "id": "dotenv",
+        "aliases": [
+          ".env",
+          "env",
+          "environment variables",
+          "secret",
+          "vault",
+          "encrypt",
+          "password",
+          "api",
+          "key",
+          "dotenvx"
+        ],
+        "filenames": [
+          ".env"
+        ],
+        "filenamePatterns": [
+          ".env.*"
+        ],
+        "configuration": "./src/syntax/language-configuration.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run type:check && node scripts/build.mjs",
+    "type:check": "tsc --noEmit -p ./",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node scripts/build.mjs --watch",
+    "watch:tsc": "tsc --noEmit -w -p ./",
+    "package": "npm run type:check && node scripts/build.mjs --production",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test",
+    "vsix": "vsce package",
+    "pub": "vsce publish",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.11.0",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0",
+    "@vscode/vsce": "^2.29.0",
+    "esbuild": "^0.23.0",
+    "eslint": "^8.57.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.3.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "find-up": "^7.0.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  }
+}

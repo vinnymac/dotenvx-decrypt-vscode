@@ -1,0 +1,14 @@
+.vscode/**
+.vscode-test/**
+.husky/**
+src/**
+.gitignore
+.npmrc
+.env
+.env.keys
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/.eslintrc.json
+**/*.map
+**/*.ts
+**/.vscode-test.*
