@@ -10,14 +10,14 @@
     "type": "git",
     "url": "https://github.com/vinnymac/dotenvx-decrypt-vscode"
   },
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "engines": {
     "vscode": "^1.90.0"
   },
   "galleryBanner": {
     "color": "#f7df1e",
-    "theme": "dark"
+    "theme": "highContrast"
   },
   "categories": [
     "Other"
@@ -172,6 +172,8 @@
     "test": "vscode-test",
     "vsix": "vsce package",
     "pub": "vsce publish",
+    "pre:vsix": "vsce package --pre-release",
+    "pre:pub": "vsce publish --pre-release",
     "prepare": "husky",
     "format": "prettier --write ."
   },
