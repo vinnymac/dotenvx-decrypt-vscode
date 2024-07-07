@@ -18,9 +18,8 @@ export class Preferences {
     await Preferences.userConfig.update(
       Preferences.keys.enableAutoReveal,
       toggle,
-      vscode.ConfigurationTarget.Global
+      vscode.ConfigurationTarget.Global,
     );
-    return toggle;
   }
 
   get autoRevealEnabled() {
@@ -32,7 +31,7 @@ export class Preferences {
   }
 
   get displayAutoRevealNavigationButtonEnabled() {
-    return Boolean(Preferences.userConfig.get(Preferences.keys.displayAutoRevealCodeLens));
+    return Boolean(Preferences.userConfig.get(Preferences.keys.displayAutoRevealNavigationButton));
   }
 }
 

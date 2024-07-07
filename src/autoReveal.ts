@@ -49,7 +49,7 @@ class AutoReveal {
       const codelensProvider = new CodeLensProvider();
       const codeLens = vscode.languages.registerCodeLensProvider(
         { scheme: 'file', pattern: '**/.env*' },
-        codelensProvider
+        codelensProvider,
       );
 
       commandSubs.push(codeLens);
@@ -59,14 +59,14 @@ class AutoReveal {
       'dotenvx.toggleSecretVisibility',
       async () => {
         await this.runAutoRevealCommand();
-      }
+      },
     );
     commandSubs.push(toggleSecretVisibilityCmd);
     const toggleSecretVisibilityTouchbarCmd = vscode.commands.registerCommand(
       'dotenvx.toggleSecretVisibilityTouchbar',
       async () => {
         await this.runAutoRevealCommand();
-      }
+      },
     );
     commandSubs.push(toggleSecretVisibilityTouchbarCmd);
 
@@ -74,7 +74,7 @@ class AutoReveal {
       'dotenvx.hideSecrets',
       async () => {
         await this.runAutoRevealCommand();
-      }
+      },
     );
     commandSubs.push(disableSecretVisibilityCmd);
 
@@ -82,7 +82,7 @@ class AutoReveal {
       'dotenvx.showSecrets',
       async () => {
         await this.runAutoRevealCommand();
-      }
+      },
     );
     commandSubs.push(enableSecretVisibilityCmd);
 

@@ -7,10 +7,7 @@ import * as rl from 'node:readline';
 import { findDotenvxBinaryPath } from './findDotenvxBinaryPath.js';
 import { dotenvxCommand } from './command.js';
 
-async function processLineByLine(
-  filePath: string,
-  result: Record<string, string>
-) {
+async function processLineByLine(filePath: string, result: Record<string, string>) {
   const fileStream = fs.createReadStream(filePath);
 
   const readline = rl.createInterface({
@@ -34,18 +31,14 @@ async function processLineByLine(
   return decryptedFileContent;
 }
 
-export class DotenvVirtualDocumentProvider
-  implements vscode.TextDocumentContentProvider
-{
+export class DotenvVirtualDocumentProvider implements vscode.TextDocumentContentProvider {
   static scheme = 'dotenvx';
 
-  private async asyncProvideTextDocumentContent(
-    uri: vscode.Uri
-  ): Promise<string> {
+  private async asyncProvideTextDocumentContent(uri: vscode.Uri): Promise<string> {
     const dotenvxPath = await findDotenvxBinaryPath();
     if (!dotenvxPath) {
       vscode.window.showErrorMessage(
-        'dotenvx binary not found. Please install dotenvx globally or in your project, then try again.'
+        'dotenvx binary not found. Please install dotenvx globally or in your project, then try again.',
       );
       return '';
     }

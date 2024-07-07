@@ -4,13 +4,13 @@
   "description": "Conveniently decrypt files managed by dotenvx when permissable",
   "author": "vinnymac",
   "publisher": "vinnymac",
-  "icon": "./dotenv.webp",
+  "icon": "./images/dotenv.webp",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/vinnymac/dotenvx-decrypt-vscode"
   },
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "engines": {
     "vscode": "^1.90.0"
@@ -172,7 +172,8 @@
     "test": "vscode-test",
     "vsix": "vsce package",
     "pub": "vsce publish",
-    "prepare": "husky"
+    "prepare": "husky",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@types/mocha": "^10.0.7",
@@ -196,8 +197,9 @@
   },
   "lint-staged": {
     "*.ts": [
-      "prettier --write",
-      "eslint --fix"
-    ]
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{mjs,md,json,yml}": "prettier --write"
   }
 }

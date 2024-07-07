@@ -13,10 +13,7 @@ class TextEditorDecorator {
 
   private logger = new LogService();
 
-  private buildPatches(
-    sourceCode: string,
-    decryptedDotenv: Record<string, string>
-  ) {
+  private buildPatches(sourceCode: string, decryptedDotenv: Record<string, string>) {
     const patches = [];
     const regex = /([A-Z_][A-Z_0-9]*)=(.+)/;
     let lineIndex = 0;
@@ -31,7 +28,7 @@ class TextEditorDecorator {
         continue;
       }
       const [, key, encryptedSecret] = matches;
-      if (key === 'DOTENV_PUBLIC_KEY') {
+      if (key.startsWith('DOTENV_PUBLIC_KEY')) {
         continue;
       }
 
@@ -63,12 +60,12 @@ class TextEditorDecorator {
   private apply(
     _ctx: vscode.ExtensionContext,
     editor: vscode.TextEditor,
-    patches: ReturnType<typeof this.buildPatches>
+    patches: ReturnType<typeof this.buildPatches>,
   ) {
     const decorations = patches.map((patch) => {
       const range = new vscode.Range(
         new vscode.Position(patch.start.line - 1, patch.start.column),
-        new vscode.Position(patch.end.line - 1, patch.end.column)
+        new vscode.Position(patch.end.line - 1, patch.end.column),
       );
 
       return {
@@ -88,10 +85,7 @@ class TextEditorDecorator {
     editor.setDecorations(this.maskDecoration, decorations);
   }
 
-  public async redecorate(
-    context: vscode.ExtensionContext,
-    editor: vscode.TextEditor | undefined
-  ) {
+  public async redecorate(context: vscode.ExtensionContext, editor: vscode.TextEditor | undefined) {
     if (!editor) {
       return;
     }
@@ -104,9 +98,7 @@ class TextEditorDecorator {
       if (!preferences.autoRevealEnabled) {
         this.apply(context, editor, []);
       } else {
-        const decryptedDotenv = await dotenvxCommand.getDecrypted(
-          editor.document.fileName
-        );
+        const decryptedDotenv = await dotenvxCommand.getDecrypted(editor.document.fileName);
         const sourceCode = editor.document.getText();
         const patches = this.buildPatches(sourceCode, decryptedDotenv);
         this.apply(context, editor, patches);

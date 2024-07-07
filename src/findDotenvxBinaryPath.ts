@@ -22,25 +22,15 @@ export async function findDotenvxBinaryPath(): Promise<string | null> {
 
   // Check local node_modules
   if (!vscode.workspace.workspaceFolders && vscode.workspace.rootPath) {
-    const localPath = path.join(
-      vscode.workspace.rootPath,
-      'node_modules',
-      '.bin',
-      'dotenvx'
-    );
+    const localPath = path.join(vscode.workspace.rootPath, 'node_modules', '.bin', 'dotenvx');
     if (fs.existsSync(localPath)) {
       return localPath;
     }
   }
 
   if (vscode.workspace.workspaceFolders) {
-    for (const folder of vscode.workspace.workspaceFolders) {
-      const localPath = path.join(
-        folder.uri.fsPath,
-        'node_modules',
-        '.bin',
-        'dotenvx'
-      );
+    for (const folder of Array.from(vscode.workspace.workspaceFolders)) {
+      const localPath = path.join(folder.uri.fsPath, 'node_modules', '.bin', 'dotenvx');
       if (fs.existsSync(localPath)) {
         return localPath;
       }

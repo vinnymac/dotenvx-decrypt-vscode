@@ -1,13 +1,13 @@
-import { window } from "vscode";
+import * as vscode from 'vscode';
 
-type LogLevel = "DEBUG" | "INFO" | "WARN" | "ERROR" | "NONE";
+type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
 
-const dotenvxOutputChannel = window.createOutputChannel("Dotenvx");
+export const dotenvxOutputChannel = vscode.window.createOutputChannel('Dotenvx', 'dotenv');
 
 export class LogService {
   private outputChannel = dotenvxOutputChannel;
 
-  private logLevel: LogLevel = "DEBUG";
+  private logLevel: LogLevel = 'INFO';
 
   public setOutputLevel(logLevel: LogLevel) {
     this.logLevel = logLevel;
@@ -15,53 +15,49 @@ export class LogService {
 
   public debug(message: string, data?: unknown): void {
     if (
-      this.logLevel === "NONE" ||
-      this.logLevel === "INFO" ||
-      this.logLevel === "WARN" ||
-      this.logLevel === "ERROR"
+      this.logLevel === 'NONE' ||
+      this.logLevel === 'INFO' ||
+      this.logLevel === 'WARN' ||
+      this.logLevel === 'ERROR'
     ) {
       return;
     }
-    this.message(message, "DEBUG");
+    this.message(message, 'DEBUG');
     if (data) {
       this.object(data);
     }
   }
 
   public info(message: string, data?: unknown): void {
-    if (
-      this.logLevel === "NONE" ||
-      this.logLevel === "WARN" ||
-      this.logLevel === "ERROR"
-    ) {
+    if (this.logLevel === 'NONE' || this.logLevel === 'WARN' || this.logLevel === 'ERROR') {
       return;
     }
-    this.message(message, "INFO");
+    this.message(message, 'INFO');
     if (data) {
       this.object(data);
     }
   }
 
   public warn(message: string, data?: unknown): void {
-    if (this.logLevel === "NONE" || this.logLevel === "ERROR") {
+    if (this.logLevel === 'NONE' || this.logLevel === 'ERROR') {
       return;
     }
-    this.message(message, "WARN");
+    this.message(message, 'WARN');
     if (data) {
       this.object(data);
     }
   }
 
   public error(message: string, error?: unknown) {
-    if (this.logLevel === "NONE") {
+    if (this.logLevel === 'NONE') {
       return;
     }
-    this.message(message, "ERROR");
-    if (typeof error === "string") {
+    this.message(message, 'ERROR');
+    if (typeof error === 'string') {
       this.outputChannel.appendLine(error);
     } else if (error instanceof Error) {
       if (error?.message) {
-        this.message(error.message, "ERROR");
+        this.message(error.message, 'ERROR');
       }
       if (error?.stack) {
         this.outputChannel.appendLine(error.stack);

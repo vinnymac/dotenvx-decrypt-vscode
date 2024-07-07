@@ -18,7 +18,7 @@ class DotenvxCommand {
       this.dotenvxPath = await findDotenvxBinaryPath();
       if (!this.dotenvxPath) {
         vscode.window.showErrorMessage(
-          'dotenvx binary not found. Please install dotenvx globally or in your project, then try again.'
+          'dotenvx binary not found. Please install dotenvx globally or in your project, then try again.',
         );
         throw new Error('dotenvx binary not found');
       }
@@ -30,9 +30,7 @@ class DotenvxCommand {
    * Execute a dotenvx command
    */
   private async dotenvxExec(command: string) {
-    const { stdout, stderr } = await execAsync(
-      `${await this.binaryPath} ${command}`
-    );
+    const { stdout, stderr } = await execAsync(`${await this.binaryPath} ${command}`);
     if (stderr) {
       throw new Error(stderr);
     }
@@ -72,7 +70,8 @@ class DotenvxCommand {
    */
   public async checkVersionSupported() {
     const version = await this.checkVersion();
-    return Boolean(version && parseInt(version.split('.')[0], 10) >= 1);
+    this.logger.debug(`Dotenvx Version: ${version}`);
+    return Boolean(version) && parseInt(version.split('.')[0], 10) >= 1;
   }
 
   /**
@@ -91,7 +90,7 @@ class DotenvxCommand {
   }
 
   public isSupportedFile(file: string) {
-  return file.startsWith('.env') && file !== '.env.keys';
+    return file.startsWith('.env') && file !== '.env.keys';
   }
 }
 

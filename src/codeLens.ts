@@ -5,10 +5,8 @@ import { preferences } from './preferences.js';
 export class CodeLensProvider implements vscode.CodeLensProvider {
   private codeLenses: vscode.CodeLens[] = [];
   private topOfFileRange = new vscode.Range(0, 1, 10, 10);
-  private _onDidChangeCodeLenses: vscode.EventEmitter<void> =
-    new vscode.EventEmitter<void>();
-  public readonly onDidChangeCodeLenses: vscode.Event<void> =
-    this._onDidChangeCodeLenses.event;
+  private _onDidChangeCodeLenses: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
+  public readonly onDidChangeCodeLenses: vscode.Event<void> = this._onDidChangeCodeLenses.event;
 
   constructor() {
     vscode.workspace.onDidChangeConfiguration((_) => {
@@ -18,18 +16,13 @@ export class CodeLensProvider implements vscode.CodeLensProvider {
 
   public provideCodeLenses(
     _document: vscode.TextDocument,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
-    this.codeLenses = [
-      new vscode.CodeLens(this.topOfFileRange, this.getCodeLensCommand()),
-    ];
+    this.codeLenses = [new vscode.CodeLens(this.topOfFileRange, this.getCodeLensCommand())];
     return this.codeLenses;
   }
 
-  public resolveCodeLens(
-    codeLens: vscode.CodeLens,
-    _token: vscode.CancellationToken
-  ) {
+  public resolveCodeLens(codeLens: vscode.CodeLens, _token: vscode.CancellationToken) {
     codeLens.command = this.getCodeLensCommand();
     return codeLens;
   }
