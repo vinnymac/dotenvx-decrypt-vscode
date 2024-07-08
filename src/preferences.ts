@@ -12,6 +12,8 @@ export class Preferences {
     enableAutoReveal: 'dotenvx.enableAutoReveal',
     displayAutoRevealCodeLens: 'dotenvx.displayAutoRevealCodeLens',
     displayAutoRevealNavigationButton: 'dotenvx.displayAutoRevealNavigationButton',
+    displayCopyToClipboardButton: 'dotenvx.displayCopyToClipboardButton',
+    displaySetSecretButton: 'dotenvx.displaySetSecretButton',
   };
 
   public async autoRevealToggle(toggle: boolean) {
@@ -32,6 +34,14 @@ export class Preferences {
 
   get displayAutoRevealNavigationButtonEnabled() {
     return Boolean(Preferences.userConfig.get(Preferences.keys.displayAutoRevealNavigationButton));
+  }
+
+  get displayCopyToClipboardButtonEnabled() {
+    return Boolean(Preferences.userConfig.get(Preferences.keys.displayCopyToClipboardButton));
+  }
+
+  get displaySetSecretButtonEnabled() {
+    return Boolean(Preferences.userConfig.get(Preferences.keys.displaySetSecretButton));
   }
 }
 

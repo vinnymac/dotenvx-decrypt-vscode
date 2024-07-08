@@ -12,5 +12,7 @@ Currently supports
 - [x] Open decrypted document in new tab
 - [x] Check dotenvx version
 - [x] Convert currently open dotenv
+- [x] Copy secret to clipboard given a key
+- [x] Set a secret in the currently open dotenv
 
 **Enjoy!**

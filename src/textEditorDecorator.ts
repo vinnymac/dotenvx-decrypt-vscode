@@ -36,14 +36,13 @@ class TextEditorDecorator {
         continue;
       }
 
-      const startIndex = line.indexOf(encryptedSecret);
-      const endIndex = startIndex + encryptedSecret.length;
-
       const secret = decryptedDotenv[key];
-
       if (!secret) {
         continue;
       }
+
+      const startIndex = line.indexOf(encryptedSecret);
+      const endIndex = startIndex + encryptedSecret.length;
 
       patches.push({
         key,

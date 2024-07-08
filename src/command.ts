@@ -89,6 +89,36 @@ class DotenvxCommand {
     }
   }
 
+  /**
+   * Run: dotenvx set [key] [secret] -f [filePath]
+   */
+  public async setSecretForKey(key: string, secret: string, filePath: string) {
+    try {
+      const result = await this.dotenvxExec(`set ${key} ${secret} -f ${filePath}`);
+      return result;
+    } catch (error) {
+      if (error instanceof Error) {
+        vscode.window.showErrorMessage(error.message);
+      }
+      return null;
+    }
+  }
+
+  /**
+   * Run: dotenvx get [key] -f [filePath]
+   */
+  public async getSecretForKey(key: string, filePath: string) {
+    try {
+      const result = await this.dotenvxExec(`get ${key} -f ${filePath}`);
+      return result;
+    } catch (error) {
+      if (error instanceof Error) {
+        vscode.window.showErrorMessage(error.message);
+      }
+      return null;
+    }
+  }
+
   public isSupportedFile(file: string) {
     return file.startsWith('.env') && file !== '.env.keys';
   }

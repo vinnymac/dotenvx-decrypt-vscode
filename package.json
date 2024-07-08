@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/vinnymac/dotenvx-decrypt-vscode"
   },
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "engines": {
     "vscode": "^1.90.0"
@@ -34,15 +34,35 @@
         },
         {
           "command": "dotenvx.showSecrets",
-          "group": "navigation",
+          "group": "navigation@1",
           "when": "resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton && !config.dotenvx.enableAutoReveal"
+        },
+        {
+          "command": "dotenvx.setSecretForKey",
+          "group": "navigation@2",
+          "when": "resourceLangId == dotenv && config.dotenvx.displaySetSecretButton"
+        },
+        {
+          "command": "dotenvx.copySecretForKey",
+          "group": "navigation@3",
+          "when": "resourceLangId == dotenv && config.dotenvx.displayCopyToClipboardButton"
         }
       ],
       "touchBar": [
         {
           "command": "dotenvx.toggleSecretVisibilityTouchbar",
-          "group": "navigation",
+          "group": "navigation@1",
           "when": "resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton"
+        },
+        {
+          "command": "dotenvx.setSecretForKey",
+          "group": "navigation@2",
+          "when": "resourceLangId == dotenv && config.dotenvx.displaySetSecretButton"
+        },
+        {
+          "command": "dotenvx.copySecretForKey",
+          "group": "navigation@3",
+          "when": "resourceLangId == dotenv && config.dotenvx.displayCopyToClipboardButton"
         }
       ]
     },
@@ -67,6 +87,18 @@
           "type": "boolean",
           "default": true,
           "description": "Enable the navigation button for auto reveal"
+        },
+        "dotenvx.displayCopyToClipboardButton": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the navigation button for copying secrets to clipboard"
+        },
+        "dotenvx.displaySetSecretButton": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the navigation button for setting secrets"
         }
       }
     },
@@ -94,7 +126,7 @@
         "shortTitle": "Hide",
         "icon": {
           "light": "./images/lock-open-outline.svg",
-          "dark": "./images/lock-open-outline-white.svg"
+          "dark": "./images/lock-open-outline-light.svg"
         }
       },
       {
@@ -103,8 +135,8 @@
         "title": "Show Secrets",
         "shortTitle": "Show",
         "icon": {
-          "light": "./images/lock-closed-outline.svg",
-          "dark": "./images/lock-closed-outline-white.svg"
+          "light": "./images/lock-closed.svg",
+          "dark": "./images/lock-closed-light.svg"
         }
       },
       {
@@ -121,6 +153,24 @@
         "command": "dotenvx.convertDotenv",
         "category": "Dotenvx",
         "title": "Convert active file"
+      },
+      {
+        "command": "dotenvx.setSecretForKey",
+        "category": "Dotenvx",
+        "title": "Set Secret",
+        "icon": {
+          "light": "./images/key-outline.svg",
+          "dark": "./images/key-outline-light.svg"
+        }
+      },
+      {
+        "command": "dotenvx.copySecretForKey",
+        "category": "Dotenvx",
+        "title": "Copy Secret",
+        "icon": {
+          "light": "./images/clipboard-outline.svg",
+          "dark": "./images/clipboard-outline-light.svg"
+        }
       }
     ],
     "resourceLabelFormatters": [
