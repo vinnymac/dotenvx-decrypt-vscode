@@ -104,9 +104,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const dotenvSecret = await dotenvxCommand.getSecretForKey(key, editor.document.fileName);
       if (dotenvSecret) {
         await vscode.env.clipboard.writeText(dotenvSecret);
-        vscode.window.showInformationMessage(
-          `The secret for key "${key}" has been copied to your clipboard.`,
-        );
+        vscode.window.showInformationMessage(`Copied "${key}" to clipboard.`);
       }
     },
   );
@@ -126,7 +124,7 @@ export async function activate(context: vscode.ExtensionContext) {
         prompt: 'Examples: DB_PASSWORD, RESEND_API_KEY, REDIS_CLUSTER_ENDPOINT',
         placeHolder: 'Enter a secret key',
         validateInput(value: string) {
-          if (/[A-Z_]+[A-Z0-9_]*/.exec(value)) {
+          if (/[a-zA-Z_][a-zA-Z_0-9]*/.exec(value)) {
             return null;
           }
           return 'Your secret key must only include the characters: _ A-Z 0-9, and start with: _ A-Z';
@@ -154,6 +152,32 @@ export async function activate(context: vscode.ExtensionContext) {
     },
   );
   context.subscriptions.push(setSecretForKeyCmd);
+
+  const copySecretOnLineCmd = vscode.commands.registerCommand(
+    'dotenvx.copySecretOnLine',
+    async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        vscode.window.showInformationMessage('No active editor found');
+        return;
+      }
+
+      const lineText = editor.document.lineAt(editor.selection.active.line);
+      const matches = /([a-zA-Z_][a-zA-Z_0-9]*)=/.exec(lineText.text.trim());
+      if (!matches) {
+        vscode.window.showErrorMessage('Nothing to copy.');
+        return;
+      }
+
+      const [, key] = matches;
+      const dotenvSecret = await dotenvxCommand.getSecretForKey(key, editor.document.fileName);
+      if (dotenvSecret) {
+        await vscode.env.clipboard.writeText(dotenvSecret);
+        vscode.window.showInformationMessage(`Copied "${key}" to clipboard.`);
+      }
+    },
+  );
+  context.subscriptions.push(copySecretOnLineCmd);
 
   setTimeout(async () => {
     const supported = await dotenvxCommand.checkVersionSupported();

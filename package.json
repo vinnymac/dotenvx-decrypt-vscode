@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/vinnymac/dotenvx-decrypt-vscode"
   },
-  "version": "0.0.7",
+  "version": "0.0.8",
   "type": "module",
   "engines": {
     "vscode": "^1.90.0"
@@ -26,6 +26,13 @@
   "main": "./dist/extension.cjs",
   "contributes": {
     "menus": {
+      "editor/context": [
+        {
+          "command": "dotenvx.copySecretOnLine",
+          "group": "navigation",
+          "when": "editorTextFocus && resourceLangId == dotenv && config.dotenvx.displayContextMenuCopySecretOnLine"
+        }
+      ],
       "editor/title": [
         {
           "command": "dotenvx.hideSecrets",
@@ -99,6 +106,12 @@
           "type": "boolean",
           "default": true,
           "description": "Enable the navigation button for setting secrets"
+        },
+        "dotenvx.displayContextMenuCopySecretOnLine": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the context menu for copying secrets"
         }
       }
     },
@@ -171,6 +184,11 @@
           "light": "./images/clipboard-outline.svg",
           "dark": "./images/clipboard-outline-light.svg"
         }
+      },
+      {
+        "command": "dotenvx.copySecretOnLine",
+        "category": "Dotenvx",
+        "title": "Copy Secret on Current Line"
       }
     ],
     "resourceLabelFormatters": [

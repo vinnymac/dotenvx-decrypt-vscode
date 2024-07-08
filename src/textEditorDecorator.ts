@@ -15,7 +15,7 @@ class TextEditorDecorator {
 
   private buildPatches(sourceCode: string, decryptedDotenv: Record<string, string>) {
     const patches = [];
-    const regex = /([A-Z_][A-Z_0-9]*)=(.+)/;
+    const regex = /([a-zA-Z_][a-zA-Z_0-9]*)=(.+)/;
     let lineIndex = 0;
 
     const lines = sourceCode.split('\n');

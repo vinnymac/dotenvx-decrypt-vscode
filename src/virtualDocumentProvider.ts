@@ -20,9 +20,13 @@ export class DotenvVirtualDocumentProvider implements vscode.TextDocumentContent
 
     let decryptedFileContent =
       '#/ The secrets 🤫 in this file have been ⚜️ decrypted ⚜️ by dotenvx\n\n';
+
+    const regex = /([a-zA-Z_][a-zA-Z_0-9]*)=/;
     for await (const line of readline) {
-      if (/[A-Z_]/.test(line[0])) {
-        const key = line.split('=')[0];
+      const matches = regex.exec(line);
+      regex.lastIndex = 0;
+      if (matches) {
+        const [, key] = matches;
         const decryptedValue = result[key];
         if (decryptedValue) {
           decryptedFileContent += `${key}="${decryptedValue}"\n`;

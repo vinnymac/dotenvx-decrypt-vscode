@@ -14,6 +14,7 @@ export class Preferences {
     displayAutoRevealNavigationButton: 'dotenvx.displayAutoRevealNavigationButton',
     displayCopyToClipboardButton: 'dotenvx.displayCopyToClipboardButton',
     displaySetSecretButton: 'dotenvx.displaySetSecretButton',
+    displayContextMenuCopySecretOnLine: 'dotenvx.displayContextMenuCopySecretOnLine',
   };
 
   public async autoRevealToggle(toggle: boolean) {
@@ -42,6 +43,10 @@ export class Preferences {
 
   get displaySetSecretButtonEnabled() {
     return Boolean(Preferences.userConfig.get(Preferences.keys.displaySetSecretButton));
+  }
+
+  get displayContextMenuCopySecretOnLineEnabled() {
+    return Boolean(Preferences.userConfig.get(Preferences.keys.displayContextMenuCopySecretOnLine));
   }
 }
 

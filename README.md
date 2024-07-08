@@ -14,5 +14,6 @@ Currently supports
 - [x] Convert currently open dotenv
 - [x] Copy secret to clipboard given a key
 - [x] Set a secret in the currently open dotenv
+- [x] Copy secret on current line
 
 **Enjoy!**
