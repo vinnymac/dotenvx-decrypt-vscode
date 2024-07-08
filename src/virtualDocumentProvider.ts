@@ -1,6 +1,4 @@
 import * as vscode from 'vscode';
-import * as util from 'node:util';
-import * as cp from 'node:child_process';
 import * as fs from 'node:fs';
 import * as rl from 'node:readline';
 
