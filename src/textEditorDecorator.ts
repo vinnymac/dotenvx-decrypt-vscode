@@ -36,10 +36,10 @@ class TextEditorDecorator {
         continue;
       }
 
-      const secret = decryptedDotenv[key];
-      if (!secret) {
+      if (!(key in decryptedDotenv)) {
         continue;
       }
+      const secret = decryptedDotenv[key];
 
       const startIndex = line.indexOf(encryptedSecret);
       const endIndex = startIndex + encryptedSecret.length;
