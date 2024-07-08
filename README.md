@@ -1,6 +1,8 @@
 # dotenvx-decrypt-vscode
 
-![Dotenvx Decrypt](./images/icon.png)
+[![Dotenvx Decrypt](./images/icon.png)](https://marketplace.visualstudio.com/items?itemName=vinnymac.dotenvx-decrypt-vscode)
+
+[![VS Marketplace](https://img.shields.io/visual-studio-marketplace/v/vinnymac.dotenvx-decrypt-vscode?label=VS%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=vinnymac.dotenvx-decrypt-vscode)
 
 Dotenvx (work in progress) support for VS Code.
 
