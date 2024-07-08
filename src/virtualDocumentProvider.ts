@@ -7,32 +7,32 @@ import * as rl from 'node:readline';
 import { findDotenvxBinaryPath } from './findDotenvxBinaryPath.js';
 import { dotenvxCommand } from './command.js';
 
-async function processLineByLine(filePath: string, result: Record<string, string>) {
-  const fileStream = fs.createReadStream(filePath);
-
-  const readline = rl.createInterface({
-    input: fileStream,
-    crlfDelay: Infinity,
-  });
-
-  let decryptedFileContent =
-    '#/ The secrets 🤫 in this file have been ⚜️ decrypted ⚜️ by dotenvx\n\n';
-  for await (const line of readline) {
-    if (/[A-Z_]/.test(line[0])) {
-      const key = line.split('=')[0];
-      const decryptedValue = result[key];
-      if (decryptedValue) {
-        decryptedFileContent += `${key}="${decryptedValue}"\n`;
-        continue;
-      }
-    }
-    decryptedFileContent += `${line}\n`;
-  }
-  return decryptedFileContent;
-}
-
 export class DotenvVirtualDocumentProvider implements vscode.TextDocumentContentProvider {
   static scheme = 'dotenvx';
+
+  private async processLineByLine(filePath: string, result: Record<string, string>) {
+    const fileStream = fs.createReadStream(filePath);
+
+    const readline = rl.createInterface({
+      input: fileStream,
+      crlfDelay: Infinity,
+    });
+
+    let decryptedFileContent =
+      '#/ The secrets 🤫 in this file have been ⚜️ decrypted ⚜️ by dotenvx\n\n';
+    for await (const line of readline) {
+      if (/[A-Z_]/.test(line[0])) {
+        const key = line.split('=')[0];
+        const decryptedValue = result[key];
+        if (decryptedValue) {
+          decryptedFileContent += `${key}="${decryptedValue}"\n`;
+          continue;
+        }
+      }
+      decryptedFileContent += `${line}\n`;
+    }
+    return decryptedFileContent;
+  }
 
   private async asyncProvideTextDocumentContent(uri: vscode.Uri): Promise<string> {
     const dotenvxPath = await findDotenvxBinaryPath();
@@ -45,7 +45,7 @@ export class DotenvVirtualDocumentProvider implements vscode.TextDocumentContent
 
     const filePath = uri.path;
     const decryptedDotenv = await dotenvxCommand.getDecrypted(filePath);
-    const decryptedContent = await processLineByLine(filePath, decryptedDotenv);
+    const decryptedContent = await this.processLineByLine(filePath, decryptedDotenv);
     return decryptedContent;
   }
 

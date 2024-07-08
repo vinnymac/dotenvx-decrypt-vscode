@@ -47,7 +47,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const document = editor.document;
-      if (document.uri.scheme !== DotenvVirtualDocumentProvider.scheme) {
+      if (document.uri.scheme !== 'file') {
         vscode.window.showErrorMessage(`Incorrect scheme: ${document.uri.scheme}`);
         return;
       }
