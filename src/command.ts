@@ -1,9 +1,13 @@
 import * as vscode from 'vscode';
 import * as util from 'node:util';
 import * as cp from 'node:child_process';
+import * as fs from 'node:fs/promises';
+
+import dotenvx from '@dotenvx/dotenvx';
 
 import { findDotenvxBinaryPath } from './findDotenvxBinaryPath.js';
 import { LogService } from './LogService.js';
+import { preferences } from './preferences.js';
 
 const execAsync = util.promisify(cp.exec);
 
@@ -41,6 +45,16 @@ class DotenvxCommand {
    * Run: dotenvx get -f .env
    */
   public async getDecrypted(filePath: string) {
+    if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
+      const result = dotenvx.get(undefined, [
+        { type: 'envFile', value: filePath },
+      ] as unknown as string[]);
+      if (!result || typeof result === 'string') {
+        return null;
+      }
+      return result;
+    }
+
     const result = await this.dotenvxExec(`get -f ${filePath}`);
     if (!result) {
       return null;
@@ -78,6 +92,18 @@ class DotenvxCommand {
    * Run: dotenvx encrypt
    */
   public async encrypt(filePath: string) {
+    if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
+      const result = dotenvx.encrypt(filePath, [] as unknown as string);
+      if (result.processedEnvFiles[0].error) {
+        this.logger.error(
+          `Failed to encrypt file at ${filePath}`,
+          result.processedEnvFiles[0].error,
+        );
+        return null;
+      }
+      return 'success';
+    }
+
     try {
       const result = await this.dotenvxExec(`encrypt -f ${filePath}`);
       return result;
@@ -93,6 +119,20 @@ class DotenvxCommand {
    * Run: dotenvx set [key] [secret] -f [filePath]
    */
   public async setSecretForKey(key: string, secret: string, filePath: string) {
+    if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
+      const result = dotenvx.set(key, secret, filePath);
+      const envFile = result.processedEnvFiles[0];
+      if (envFile.error) {
+        this.logger.error(
+          `Failed to set secret ${key} at ${filePath}`,
+          result.processedEnvFiles[0].error,
+        );
+        return null;
+      }
+      await fs.writeFile(envFile.envFilepath, envFile.envSrc);
+      return 'success';
+    }
+
     try {
       const result = await this.dotenvxExec(`set ${key} ${secret} -f ${filePath}`);
       return result;
@@ -108,6 +148,17 @@ class DotenvxCommand {
    * Run: dotenvx get [key] -f [filePath]
    */
   public async getSecretForKey(key: string, filePath: string) {
+    if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
+      const result = dotenvx.get(key, [
+        { type: 'envFile', value: filePath },
+      ] as unknown as string[]);
+      if (!result || typeof result !== 'string') {
+        this.logger.error(`Failed to get secret ${key} at ${filePath}, type was ${typeof result}`);
+        return null;
+      }
+      return result;
+    }
+
     try {
       const result = await this.dotenvxExec(`get ${key} -f ${filePath}`);
       return result;

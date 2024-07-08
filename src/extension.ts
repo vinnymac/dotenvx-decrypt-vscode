@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
+import * as path from 'node:path';
 
 import { DotenvVirtualDocumentProvider } from './virtualDocumentProvider.js';
 import { findDotenvxBinaryPath } from './findDotenvxBinaryPath.js';
 import { autoRevealCommand } from './autoReveal.js';
 import { dotenvxCommand } from './command.js';
+import { preferences } from './preferences.js';
 
 export async function activate(context: vscode.ExtensionContext) {
   const encryptCommand = vscode.commands.registerCommand('dotenvx.encryptDotenv', async () => {
@@ -22,13 +23,18 @@ export async function activate(context: vscode.ExtensionContext) {
   });
   context.subscriptions.push(encryptCommand);
 
-  const checkVersionCommand = vscode.commands.registerCommand('dotenvx.checkVersion', async () => {
-    const version = await dotenvxCommand.checkVersion();
-    if (version) {
-      vscode.window.showInformationMessage(`dotenvx version: ${version}`);
-    }
-  });
-  context.subscriptions.push(checkVersionCommand);
+  if (preferences.autoSearchForLocalDotenvxBinaryEnabled) {
+    const checkVersionCommand = vscode.commands.registerCommand(
+      'dotenvx.checkVersion',
+      async () => {
+        const version = await dotenvxCommand.checkVersion();
+        if (version) {
+          vscode.window.showInformationMessage(`dotenvx version: ${version}`);
+        }
+      },
+    );
+    context.subscriptions.push(checkVersionCommand);
+  }
 
   const provider = new DotenvVirtualDocumentProvider();
   const providerDisposable = vscode.workspace.registerTextDocumentContentProvider(
@@ -180,6 +186,9 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(copySecretOnLineCmd);
 
   setTimeout(async () => {
+    if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
+      return;
+    }
     const supported = await dotenvxCommand.checkVersionSupported();
     if (!supported) {
       vscode.window.showErrorMessage('Unsupported dotenvx version, must be 1.0.0 or higher');

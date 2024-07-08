@@ -36,7 +36,7 @@
       "editor/title": [
         {
           "command": "dotenvx.hideSecrets",
-          "group": "navigation",
+          "group": "navigation@1",
           "when": "resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton && config.dotenvx.enableAutoReveal"
         },
         {
@@ -112,6 +112,12 @@
           "type": "boolean",
           "default": true,
           "description": "Enable the context menu for copying secrets"
+        },
+        "dotenvx.autoSearchForLocalDotenvxBinary": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Enable searching for a locally installed version of dotenvx"
         }
       }
     },
@@ -124,7 +130,8 @@
       {
         "command": "dotenvx.checkVersion",
         "category": "Dotenvx",
-        "title": "Check Version"
+        "title": "Check Version",
+        "enablement": "config.dotenvx.autoSearchForLocalDotenvxBinary"
       },
       {
         "command": "dotenvx.toggleSecretVisibility",
@@ -157,6 +164,7 @@
         "category": "Dotenvx",
         "title": "Toggle Secret Visibility",
         "shortTitle": "Toggle Secret",
+        "enablement": "config.dotenvx.displayAutoRevealNavigationButton",
         "icon": {
           "light": "./images/icon.png",
           "dark": "./images/icon.png"
@@ -246,6 +254,7 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
+    "@types/diff": "^5.2.1",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
     "@types/vscode": "^1.90.0",
@@ -263,6 +272,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.5.0",
     "find-up": "^7.0.0"
   },
   "lint-staged": {
