@@ -11,7 +11,7 @@ Currently supports
 - [x] Reveal encrypted secrets inline
 - [x] Open decrypted document in new tab
 - [x] Check dotenvx version
-- [x] Convert currently open dotenv
+- [x] Encrypt currently open dotenv
 - [x] Copy secret to clipboard given a key
 - [x] Set a secret in the currently open dotenv
 - [x] Copy secret on current line

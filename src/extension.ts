@@ -7,7 +7,7 @@ import { autoRevealCommand } from './autoReveal.js';
 import { dotenvxCommand } from './command.js';
 
 export async function activate(context: vscode.ExtensionContext) {
-  const convertCommand = vscode.commands.registerCommand('dotenvx.convertDotenv', async () => {
+  const encryptCommand = vscode.commands.registerCommand('dotenvx.encryptDotenv', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showInformationMessage('No active editor found');
@@ -15,12 +15,12 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     const document = editor.document;
-    const converted = await dotenvxCommand.convert(document.fileName);
-    if (converted) {
-      vscode.window.showInformationMessage(`File has been converted using dotenvx`);
+    const encrypted = await dotenvxCommand.encrypt(document.fileName);
+    if (encrypted) {
+      vscode.window.showInformationMessage(`File has been encrypted using dotenvx`);
     }
   });
-  context.subscriptions.push(convertCommand);
+  context.subscriptions.push(encryptCommand);
 
   const checkVersionCommand = vscode.commands.registerCommand('dotenvx.checkVersion', async () => {
     const version = await dotenvxCommand.checkVersion();

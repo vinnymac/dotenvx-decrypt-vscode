@@ -75,11 +75,11 @@ class DotenvxCommand {
   }
 
   /**
-   * Run: dotenvx convert
+   * Run: dotenvx encrypt
    */
-  public async convert(filePath: string) {
+  public async encrypt(filePath: string) {
     try {
-      const result = await this.dotenvxExec(`convert -f ${filePath}`);
+      const result = await this.dotenvxExec(`encrypt -f ${filePath}`);
       return result;
     } catch (error) {
       if (error instanceof Error) {

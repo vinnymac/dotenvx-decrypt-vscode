@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/vinnymac/dotenvx-decrypt-vscode"
   },
-  "version": "0.0.8",
+  "version": "0.0.9",
   "type": "module",
   "engines": {
     "vscode": "^1.90.0"
@@ -163,9 +163,9 @@
         }
       },
       {
-        "command": "dotenvx.convertDotenv",
+        "command": "dotenvx.encryptDotenv",
         "category": "Dotenvx",
-        "title": "Convert active file"
+        "title": "Encrypt active file"
       },
       {
         "command": "dotenvx.setSecretForKey",
