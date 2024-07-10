@@ -185,6 +185,79 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(copySecretOnLineCmd);
 
+  const decryptSecretOnLineCmd = vscode.commands.registerCommand(
+    'dotenvx.decryptSecretOnLine',
+    async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        vscode.window.showInformationMessage('No active editor found');
+        return;
+      }
+
+      const lineText = editor.document.lineAt(editor.selection.active.line);
+      const matches = /([a-zA-Z_][a-zA-Z_0-9]*)=(?:['\"])?(.*)(?=['\"])/.exec(lineText.text.trim());
+      if (!matches) {
+        vscode.window.showErrorMessage('Nothing to decrypt.');
+        return;
+      }
+
+      const [, key, value] = matches;
+      if (!key) {
+        vscode.window.showErrorMessage('No secret key found unable to proceed.');
+        return;
+      } else if (key.startsWith('DOTENV_PUBLIC_KEY')) {
+        vscode.window.showErrorMessage('The public key cannot be decrypted.');
+        return;
+      } else if (value && !value.startsWith('encrypted:')) {
+        vscode.window.showErrorMessage('The secret is not encrypted.');
+        return;
+      }
+      const dotenvSecret = await dotenvxCommand.getSecretForKey(key, editor.document.fileName);
+      if (dotenvSecret) {
+        await dotenvxCommand.setSecretForKey(key, dotenvSecret, editor.document.fileName, false);
+        vscode.window.showInformationMessage(
+          `The secret "${key}" has been decrypted in ${path.basename(editor.document.fileName)}.`,
+        );
+      }
+    },
+  );
+  context.subscriptions.push(decryptSecretOnLineCmd);
+
+  const encryptSecretOnLineCmd = vscode.commands.registerCommand(
+    'dotenvx.encryptSecretOnLine',
+    async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        vscode.window.showInformationMessage('No active editor found');
+        return;
+      }
+
+      const lineText = editor.document.lineAt(editor.selection.active.line);
+      const matches = /([a-zA-Z_][a-zA-Z_0-9]*)=(?:['\"])?(.*)(?=['\"])/.exec(lineText.text.trim());
+      if (!matches) {
+        vscode.window.showErrorMessage('Nothing to encrypt.');
+        return;
+      }
+
+      const [, key, value] = matches;
+      if (!key) {
+        vscode.window.showErrorMessage('No secret key found unable to proceed.');
+        return;
+      } else if (key.startsWith('DOTENV_PUBLIC_KEY')) {
+        vscode.window.showErrorMessage('The public key should never be encrypted.');
+        return;
+      } else if (value && value.startsWith('encrypted:')) {
+        vscode.window.showErrorMessage('The secret is already encrypted.');
+        return;
+      }
+      await dotenvxCommand.encrypt(key, editor.document.fileName);
+      vscode.window.showInformationMessage(
+        `The secret "${key}" has been encrypted in ${path.basename(editor.document.fileName)}.`,
+      );
+    },
+  );
+  context.subscriptions.push(encryptSecretOnLineCmd);
+
   setTimeout(async () => {
     if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
       return;

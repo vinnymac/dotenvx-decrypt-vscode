@@ -16,6 +16,8 @@ Currently supports
 - [x] Encrypt currently open dotenv
 - [x] Copy secret to clipboard given a key
 - [x] Set a secret in the currently open dotenv
-- [x] Copy secret on current line
+- [x] Copy secret on current line via context menu
+- [x] Decrypt secret on current line via context menu
+- [x] Encrypt secret on current line via context menu
 
 **Enjoy!**

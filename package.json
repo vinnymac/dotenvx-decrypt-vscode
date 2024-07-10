@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/vinnymac/dotenvx-decrypt-vscode"
   },
-  "version": "0.0.11",
+  "version": "0.0.12",
   "type": "module",
   "engines": {
     "vscode": "^1.90.0"
@@ -25,12 +25,35 @@
   "activationEvents": [],
   "main": "./dist/extension.cjs",
   "contributes": {
+    "submenus": [
+      {
+        "id": "dotenvx.secrets",
+        "label": "Dotenv"
+      }
+    ],
     "menus": {
-      "editor/context": [
+      "dotenvx.secrets": [
         {
           "command": "dotenvx.copySecretOnLine",
-          "group": "navigation",
-          "when": "editorTextFocus && isFileSystemResource && resourceLangId == dotenv && config.dotenvx.displayContextMenuCopySecretOnLine && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
+          "group": "navigation@1",
+          "when": "config.dotenvx.displayContextMenuCopySecretOnLine"
+        },
+        {
+          "command": "dotenvx.decryptSecretOnLine",
+          "group": "navigation@2",
+          "when": "config.dotenvx.displayContextMenuDecryptSecretOnLine && !config.dotenvx.enableAutoReveal"
+        },
+        {
+          "command": "dotenvx.encryptSecretOnLine",
+          "group": "navigation@3",
+          "when": "config.dotenvx.displayContextMenuEncryptSecretOnLine && !config.dotenvx.enableAutoReveal"
+        }
+      ],
+      "editor/context": [
+        {
+          "submenu": "dotenvx.secrets",
+          "group": "0_main@1",
+          "when": "editorTextFocus && isFileSystemResource && resourceLangId == dotenv && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
         }
       ],
       "editor/title": [
@@ -78,46 +101,49 @@
       "title": "Dotenvx Decrypt",
       "properties": {
         "dotenvx.enableAutoReveal": {
-          "scope": "resource",
           "type": "boolean",
           "default": true,
           "description": "Enable quick reveal of secrets in your .env files"
         },
         "dotenvx.displayAutoRevealCodeLens": {
-          "scope": "resource",
           "type": "boolean",
           "default": false,
           "description": "Enable the code lens for auto reveal"
         },
         "dotenvx.displayAutoRevealNavigationButton": {
-          "scope": "resource",
           "type": "boolean",
           "default": true,
           "description": "Enable the navigation button for auto reveal"
         },
         "dotenvx.displayCopyToClipboardButton": {
-          "scope": "resource",
           "type": "boolean",
           "default": true,
           "description": "Enable the navigation button for copying secrets to clipboard"
         },
         "dotenvx.displaySetSecretButton": {
-          "scope": "resource",
           "type": "boolean",
           "default": true,
           "description": "Enable the navigation button for setting secrets"
         },
         "dotenvx.displayContextMenuCopySecretOnLine": {
-          "scope": "resource",
           "type": "boolean",
           "default": true,
           "description": "Enable the context menu for copying secrets"
         },
         "dotenvx.autoSearchForLocalDotenvxBinary": {
-          "scope": "resource",
           "type": "boolean",
           "default": false,
           "description": "Enable searching for a locally installed version of dotenvx"
+        },
+        "dotenvx.displayContextMenuEncryptSecretOnLine": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the context menu for encrypting secrets"
+        },
+        "dotenvx.displayContextMenuDecryptSecretOnLine": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the context menu for decrypting secrets"
         }
       }
     },
@@ -197,6 +223,16 @@
         "command": "dotenvx.copySecretOnLine",
         "category": "Dotenvx",
         "title": "Copy Secret on Current Line"
+      },
+      {
+        "command": "dotenvx.decryptSecretOnLine",
+        "category": "Dotenvx",
+        "title": "Decrypt Secret on Current Line"
+      },
+      {
+        "command": "dotenvx.encryptSecretOnLine",
+        "category": "Dotenvx",
+        "title": "Encrypt Secret on Current Line"
       }
     ],
     "resourceLabelFormatters": [

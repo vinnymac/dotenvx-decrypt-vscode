@@ -15,6 +15,8 @@ export class Preferences {
     displayCopyToClipboardButton: 'dotenvx.displayCopyToClipboardButton',
     displaySetSecretButton: 'dotenvx.displaySetSecretButton',
     displayContextMenuCopySecretOnLine: 'dotenvx.displayContextMenuCopySecretOnLine',
+    displayContextMenuDecryptSecretOnLine: 'dotenvx.displayContextMenuDecryptSecretOnLine',
+    displayContextMenuEncryptSecretOnLine: 'dotenvx.displayContextMenuEncryptSecretOnLine',
     autoSearchForLocalDotenvxBinary: 'dotenvx.autoSearchForLocalDotenvxBinary',
   };
 
@@ -52,6 +54,18 @@ export class Preferences {
 
   get autoSearchForLocalDotenvxBinaryEnabled() {
     return Boolean(Preferences.userConfig.get(Preferences.keys.autoSearchForLocalDotenvxBinary));
+  }
+
+  get displayContextMenuDecryptSecretOnLineEnabled() {
+    return Boolean(
+      Preferences.userConfig.get(Preferences.keys.displayContextMenuDecryptSecretOnLine),
+    );
+  }
+
+  get displayContextMenuEncryptSecretOnLineEnabled() {
+    return Boolean(
+      Preferences.userConfig.get(Preferences.keys.displayContextMenuEncryptSecretOnLine),
+    );
   }
 }
 

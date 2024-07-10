@@ -2,7 +2,9 @@ import * as vscode from 'vscode';
 import * as util from 'node:util';
 import * as cp from 'node:child_process';
 import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 
+// Binary works fine, but avoiding shell is faster
 import dotenvx from '@dotenvx/dotenvx';
 
 import { findDotenvxBinaryPath } from './findDotenvxBinaryPath.js';
@@ -16,6 +18,10 @@ class DotenvxCommand {
   private dotenvxPath: string | null = null;
   private get binaryPath() {
     return (async () => {
+      // Doesn't get used atm since we avoid shell when this setting is disabled
+      if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
+        return path.resolve(__dirname, './../node_modules/.bin/dotenvx');
+      }
       if (this.dotenvxPath) {
         return this.dotenvxPath;
       }
@@ -72,9 +78,7 @@ class DotenvxCommand {
         return version;
       }
     } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error('Failed to call dotenvx version', error);
-      }
+      this.logger.error('Failed to call dotenvx version', error);
     }
     return '';
   }
@@ -91,9 +95,9 @@ class DotenvxCommand {
   /**
    * Run: dotenvx encrypt
    */
-  public async encrypt(filePath: string) {
+  public async encrypt(filePath: string, key?: string) {
     if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
-      const result = dotenvx.encrypt(filePath, [] as unknown as string);
+      const result = dotenvx.encrypt(filePath, (key ? [key] : undefined) as unknown as string);
       if (result.processedEnvFiles[0].error) {
         this.logger.error(
           `Failed to encrypt file at ${filePath}`,
@@ -105,9 +109,10 @@ class DotenvxCommand {
     }
 
     try {
-      const result = await this.dotenvxExec(`encrypt -f ${filePath}`);
+      const result = await this.dotenvxExec(`encrypt${key ? ` --key ${key}` : ''} -f ${filePath}`);
       return result;
     } catch (error) {
+      this.logger.error(`Failed to encrypt secret ${key} at ${filePath}`, error);
       if (error instanceof Error) {
         vscode.window.showErrorMessage(error.message);
       }
@@ -118,9 +123,9 @@ class DotenvxCommand {
   /**
    * Run: dotenvx set [key] [secret] -f [filePath]
    */
-  public async setSecretForKey(key: string, secret: string, filePath: string) {
+  public async setSecretForKey(key: string, secret: string, filePath: string, encrypt = true) {
     if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
-      const result = dotenvx.set(key, secret, filePath);
+      const result = dotenvx.set(key, secret, filePath, encrypt);
       const envFile = result.processedEnvFiles[0];
       if (envFile.error) {
         this.logger.error(
@@ -129,14 +134,17 @@ class DotenvxCommand {
         );
         return null;
       }
-      await fs.writeFile(envFile.envFilepath, envFile.envSrc);
+      await fs.writeFile(envFile.envFilepath, envFile.envSrc, 'utf8');
       return 'success';
     }
 
     try {
-      const result = await this.dotenvxExec(`set ${key} ${secret} -f ${filePath}`);
+      const result = await this.dotenvxExec(
+        `set ${key} ${secret} -f ${filePath}${encrypt ? ' -c' : ''}`,
+      );
       return result;
     } catch (error) {
+      this.logger.error(`Failed to set secret ${key} at ${filePath}`, error);
       if (error instanceof Error) {
         vscode.window.showErrorMessage(error.message);
       }
@@ -163,6 +171,7 @@ class DotenvxCommand {
       const result = await this.dotenvxExec(`get ${key} -f ${filePath}`);
       return result;
     } catch (error) {
+      this.logger.error(`Failed to get secret ${key} at ${filePath}`, error);
       if (error instanceof Error) {
         vscode.window.showErrorMessage(error.message);
       }
