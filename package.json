@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/vinnymac/dotenvx-decrypt-vscode"
   },
-  "version": "0.0.10",
+  "version": "0.0.11",
   "type": "module",
   "engines": {
     "vscode": "^1.90.0"
@@ -30,46 +30,46 @@
         {
           "command": "dotenvx.copySecretOnLine",
           "group": "navigation",
-          "when": "editorTextFocus && resourceLangId == dotenv && config.dotenvx.displayContextMenuCopySecretOnLine"
+          "when": "editorTextFocus && isFileSystemResource && resourceLangId == dotenv && config.dotenvx.displayContextMenuCopySecretOnLine && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
         }
       ],
       "editor/title": [
         {
           "command": "dotenvx.hideSecrets",
           "group": "navigation@1",
-          "when": "resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton && config.dotenvx.enableAutoReveal"
+          "when": "isFileSystemResource && resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton && config.dotenvx.enableAutoReveal && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
         },
         {
           "command": "dotenvx.showSecrets",
           "group": "navigation@1",
-          "when": "resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton && !config.dotenvx.enableAutoReveal"
+          "when": "isFileSystemResource && resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton && !config.dotenvx.enableAutoReveal && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
         },
         {
           "command": "dotenvx.setSecretForKey",
           "group": "navigation@2",
-          "when": "resourceLangId == dotenv && config.dotenvx.displaySetSecretButton"
+          "when": "isFileSystemResource && resourceLangId == dotenv && config.dotenvx.displaySetSecretButton && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
         },
         {
           "command": "dotenvx.copySecretForKey",
           "group": "navigation@3",
-          "when": "resourceLangId == dotenv && config.dotenvx.displayCopyToClipboardButton"
+          "when": "isFileSystemResource && resourceLangId == dotenv && config.dotenvx.displayCopyToClipboardButton && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
         }
       ],
       "touchBar": [
         {
           "command": "dotenvx.toggleSecretVisibilityTouchbar",
           "group": "navigation@1",
-          "when": "resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton"
+          "when": "isFileSystemResource && resourceLangId == dotenv && config.dotenvx.displayAutoRevealNavigationButton && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
         },
         {
           "command": "dotenvx.setSecretForKey",
           "group": "navigation@2",
-          "when": "resourceLangId == dotenv && config.dotenvx.displaySetSecretButton"
+          "when": "isFileSystemResource && resourceLangId == dotenv && config.dotenvx.displaySetSecretButton && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
         },
         {
           "command": "dotenvx.copySecretForKey",
           "group": "navigation@3",
-          "when": "resourceLangId == dotenv && config.dotenvx.displayCopyToClipboardButton"
+          "when": "isFileSystemResource && resourceLangId == dotenv && config.dotenvx.displayCopyToClipboardButton && resourceFilename =~ /^.env(.(?!(keys|vault)$).*)?$/"
         }
       ]
     },
