@@ -195,7 +195,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const lineText = editor.document.lineAt(editor.selection.active.line);
-      const matches = /([a-zA-Z_][a-zA-Z_0-9]*)=(?:['\"])?(.*)(?=['\"])/.exec(lineText.text.trim());
+      const matches = /([a-zA-Z_][a-zA-Z_0-9]*)=['"]?([^'"]+)['"]?/.exec(lineText.text.trim());
       if (!matches) {
         vscode.window.showErrorMessage('Nothing to decrypt.');
         return;
@@ -205,10 +205,10 @@ export async function activate(context: vscode.ExtensionContext) {
       if (!key) {
         vscode.window.showErrorMessage('No secret key found unable to proceed.');
         return;
-      } else if (key.startsWith('DOTENV_PUBLIC_KEY')) {
+      } else if (/^DOTENV_PUBLIC_KEY/.test(key)) {
         vscode.window.showErrorMessage('The public key cannot be decrypted.');
         return;
-      } else if (value && !value.startsWith('encrypted:')) {
+      } else if (value && !/^encrypted:.+/.test(value)) {
         vscode.window.showErrorMessage('The secret is not encrypted.');
         return;
       }
@@ -233,7 +233,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const lineText = editor.document.lineAt(editor.selection.active.line);
-      const matches = /([a-zA-Z_][a-zA-Z_0-9]*)=(?:['\"])?(.*)(?=['\"])/.exec(lineText.text.trim());
+      const matches = /([a-zA-Z_][a-zA-Z_0-9]*)=['"]?([^'"]+)['"]?/.exec(lineText.text.trim());
       if (!matches) {
         vscode.window.showErrorMessage('Nothing to encrypt.');
         return;
@@ -243,14 +243,14 @@ export async function activate(context: vscode.ExtensionContext) {
       if (!key) {
         vscode.window.showErrorMessage('No secret key found unable to proceed.');
         return;
-      } else if (key.startsWith('DOTENV_PUBLIC_KEY')) {
+      } else if (/^DOTENV_PUBLIC_KEY/.test(key)) {
         vscode.window.showErrorMessage('The public key should never be encrypted.');
         return;
-      } else if (value && value.startsWith('encrypted:')) {
+      } else if (value && /^encrypted:.+/.test(value)) {
         vscode.window.showErrorMessage('The secret is already encrypted.');
         return;
       }
-      await dotenvxCommand.encrypt(key, editor.document.fileName);
+      await dotenvxCommand.encrypt(editor.document.fileName, key);
       vscode.window.showInformationMessage(
         `The secret "${key}" has been encrypted in ${path.basename(editor.document.fileName)}.`,
       );

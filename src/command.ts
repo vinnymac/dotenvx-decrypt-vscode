@@ -97,14 +97,13 @@ class DotenvxCommand {
    */
   public async encrypt(filePath: string, key?: string) {
     if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
-      const result = dotenvx.encrypt(filePath, (key ? [key] : undefined) as unknown as string);
-      if (result.processedEnvFiles[0].error) {
-        this.logger.error(
-          `Failed to encrypt file at ${filePath}`,
-          result.processedEnvFiles[0].error,
-        );
+      const result = dotenvx.encrypt(filePath, (key || undefined) as unknown as string);
+      const envFile = result.processedEnvFiles[0];
+      if (envFile.error) {
+        this.logger.error(`Failed to encrypt file at ${filePath}`, envFile.error);
         return null;
       }
+      await fs.writeFile(envFile.envFilepath, envFile.envSrc, 'utf8');
       return 'success';
     }
 
