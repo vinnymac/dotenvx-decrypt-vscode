@@ -6,12 +6,18 @@ import * as path from 'node:path';
 
 // Binary works fine, but avoiding shell is faster
 import dotenvx from '@dotenvx/dotenvx';
+// @ts-expect-error
+import smartDotenvPrivateKey from '@dotenvx/dotenvx/src/lib/helpers/smartDotenvPrivateKey.js';
 
 import { findDotenvxBinaryPath } from './findDotenvxBinaryPath.js';
 import { LogService } from './LogService.js';
 import { preferences } from './preferences.js';
 
 const execAsync = util.promisify(cp.exec);
+
+export type Result<TSuccess, TFailure> =
+  | { success: TSuccess; failure?: undefined }
+  | { success?: undefined; failure: TFailure };
 
 class DotenvxCommand {
   private logger = new LogService();
@@ -50,20 +56,25 @@ class DotenvxCommand {
   /**
    * Run: dotenvx get -f .env
    */
-  public async getDecrypted(filePath: string) {
+  public async getDecrypted(
+    filePath: string,
+  ): Promise<Result<Record<string, string | undefined>, string>> {
     if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
+      if (!smartDotenvPrivateKey(filePath)) {
+        return { failure: `Unable to find private key for ${filePath}.` };
+      }
       const result = dotenvx.get(undefined, [
         { type: 'envFile', value: filePath },
       ] as unknown as string[]);
       if (!result || typeof result === 'string') {
-        return null;
+        return { failure: `Failed to decrypt ${filePath}.` };
       }
-      return result;
+      return { success: result };
     }
 
     const result = await this.dotenvxExec(`get -f ${filePath}`);
     if (!result) {
-      return null;
+      return { failure: `Failed to decrypt ${filePath}.` };
     }
     return JSON.parse(result);
   }
@@ -154,27 +165,30 @@ class DotenvxCommand {
   /**
    * Run: dotenvx get [key] -f [filePath]
    */
-  public async getSecretForKey(key: string, filePath: string) {
+  public async getSecretForKey(key: string, filePath: string): Promise<Result<string, string>> {
     if (!preferences.autoSearchForLocalDotenvxBinaryEnabled) {
+      if (!smartDotenvPrivateKey(filePath)) {
+        return { failure: `Unable to find private key for ${filePath}.` };
+      }
       const result = dotenvx.get(key, [
         { type: 'envFile', value: filePath },
       ] as unknown as string[]);
       if (!result || typeof result !== 'string') {
         this.logger.error(`Failed to get secret ${key} at ${filePath}, type was ${typeof result}`);
-        return null;
+        return { failure: `Failed to decrypt ${filePath}.` };
       }
-      return result;
+      return { success: result };
     }
 
     try {
       const result = await this.dotenvxExec(`get ${key} -f ${filePath}`);
-      return result;
+      return { success: result };
     } catch (error) {
       this.logger.error(`Failed to get secret ${key} at ${filePath}`, error);
       if (error instanceof Error) {
-        vscode.window.showErrorMessage(error.message);
+        return { failure: error.message };
       }
-      return null;
+      return { failure: `Failed to get secret ${key} at ${filePath}.` };
     }
   }
 

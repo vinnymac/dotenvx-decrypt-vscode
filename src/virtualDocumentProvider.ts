@@ -8,7 +8,7 @@ import { dotenvxCommand } from './command.js';
 export class DotenvVirtualDocumentProvider implements vscode.TextDocumentContentProvider {
   static scheme = 'dotenvx';
 
-  private async processLineByLine(filePath: string, result: Record<string, string>) {
+  private async processLineByLine(filePath: string, result: Record<string, string | undefined>) {
     const fileStream = fs.createReadStream(filePath);
 
     const readline = rl.createInterface({
@@ -47,7 +47,11 @@ export class DotenvVirtualDocumentProvider implements vscode.TextDocumentContent
 
     const filePath = uri.path;
     const decryptedDotenv = await dotenvxCommand.getDecrypted(filePath);
-    const decryptedContent = await this.processLineByLine(filePath, decryptedDotenv);
+    if (!decryptedDotenv.success) {
+      vscode.window.showErrorMessage(decryptedDotenv.failure);
+      return '';
+    }
+    const decryptedContent = await this.processLineByLine(filePath, decryptedDotenv.success);
     return decryptedContent;
   }
 

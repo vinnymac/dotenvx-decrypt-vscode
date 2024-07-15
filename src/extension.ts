@@ -96,7 +96,11 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const decrypted = await dotenvxCommand.getDecrypted(editor.document.fileName);
-      const key = await vscode.window.showQuickPick(Object.keys(decrypted), {
+      if (!decrypted.success) {
+        vscode.window.showErrorMessage(decrypted.failure);
+        return;
+      }
+      const key = await vscode.window.showQuickPick(Object.keys(decrypted.success), {
         title: 'Dotenvx: Copy Secret',
         placeHolder: 'Choose a secret key to copy',
         canPickMany: false,
@@ -108,9 +112,11 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const dotenvSecret = await dotenvxCommand.getSecretForKey(key, editor.document.fileName);
-      if (dotenvSecret) {
-        await vscode.env.clipboard.writeText(dotenvSecret);
+      if (dotenvSecret.success) {
+        await vscode.env.clipboard.writeText(dotenvSecret.success);
         vscode.window.showInformationMessage(`Copied "${key}" to clipboard.`);
+      } else if (dotenvSecret.failure) {
+        vscode.window.showErrorMessage(dotenvSecret.failure);
       }
     },
   );
@@ -177,9 +183,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
       const [, key] = matches;
       const dotenvSecret = await dotenvxCommand.getSecretForKey(key, editor.document.fileName);
-      if (dotenvSecret) {
-        await vscode.env.clipboard.writeText(dotenvSecret);
+      if (dotenvSecret.success) {
+        await vscode.env.clipboard.writeText(dotenvSecret.success);
         vscode.window.showInformationMessage(`Copied "${key}" to clipboard.`);
+      } else if (dotenvSecret.failure) {
+        vscode.window.showErrorMessage(dotenvSecret.failure);
       }
     },
   );
@@ -213,11 +221,18 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
       const dotenvSecret = await dotenvxCommand.getSecretForKey(key, editor.document.fileName);
-      if (dotenvSecret) {
-        await dotenvxCommand.setSecretForKey(key, dotenvSecret, editor.document.fileName, false);
+      if (dotenvSecret.success) {
+        await dotenvxCommand.setSecretForKey(
+          key,
+          dotenvSecret.success,
+          editor.document.fileName,
+          false,
+        );
         vscode.window.showInformationMessage(
           `The secret "${key}" has been decrypted in ${path.basename(editor.document.fileName)}.`,
         );
+      } else if (dotenvSecret.failure) {
+        vscode.window.showErrorMessage(dotenvSecret.failure);
       }
     },
   );

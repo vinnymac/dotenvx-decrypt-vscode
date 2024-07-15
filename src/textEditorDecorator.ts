@@ -13,7 +13,7 @@ class TextEditorDecorator {
 
   private logger = new LogService();
 
-  private buildPatches(sourceCode: string, decryptedDotenv: Record<string, string>) {
+  private buildPatches(sourceCode: string, decryptedDotenv: Record<string, string | undefined>) {
     const patches = [];
     const regex = /([a-zA-Z_][a-zA-Z_0-9]*)=(.+)/;
     let lineIndex = 0;
@@ -72,7 +72,7 @@ class TextEditorDecorator {
         hoverMessage: `Decrypted from ${patch.encryptedSecret}`,
         renderOptions: {
           after: {
-            contentText: `"${patch.secret}"`,
+            contentText: `"${patch.secret || ''}"`,
             // Can't get tm theme color, so use our own
             // https://github.com/microsoft/vscode/issues/32813
             color: '#328f8f',
@@ -98,8 +98,13 @@ class TextEditorDecorator {
         this.apply(context, editor, []);
       } else {
         const decryptedDotenv = await dotenvxCommand.getDecrypted(editor.document.fileName);
+        if (!decryptedDotenv.success) {
+          this.logger.error(decryptedDotenv.failure);
+          vscode.window.showErrorMessage(decryptedDotenv.failure);
+          return;
+        }
         const sourceCode = editor.document.getText();
-        const patches = this.buildPatches(sourceCode, decryptedDotenv);
+        const patches = this.buildPatches(sourceCode, decryptedDotenv.success);
         this.apply(context, editor, patches);
       }
     } catch (e) {
