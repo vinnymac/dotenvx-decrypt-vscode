@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/vinnymac/dotenvx-decrypt-vscode"
   },
-  "version": "0.0.14",
+  "version": "0.0.15",
   "type": "module",
   "engines": {
     "vscode": "^1.90.0"

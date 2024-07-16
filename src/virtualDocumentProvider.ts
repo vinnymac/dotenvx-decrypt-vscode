@@ -26,7 +26,7 @@ export class DotenvVirtualDocumentProvider implements vscode.TextDocumentContent
       if (matches) {
         const [, key] = matches;
         const decryptedValue = result[key];
-        if (decryptedValue) {
+        if (decryptedValue || decryptedValue === '') {
           decryptedFileContent += `${key}="${decryptedValue}"\n`;
           continue;
         }
